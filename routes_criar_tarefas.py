@@ -12,7 +12,7 @@ async def criar_tarefas(titulo: str, descricao: str, status: str):
                      "values (%s, %s, %s)")
         Banco.cursor.execute(comando, (titulo, descricao, status))
         Banco.conexao.commit()
-        return {"mensagem": "CRIAÇÃO DE TAREFA REALIZADA"}
+        return {"mensagem": "TAREFA CRIADA. "}
     except Exception as erro:
         return {"erro": str(erro)}
 
@@ -65,21 +65,23 @@ async def atualizar_tarefa(titulo: str, novo_titulo: str = None, nova_descricao:
         valores.append(titulo)
         Banco.cursor.execute(comando, tuple(valores))
         Banco.conexao.commit()
-        return{"mensagem": "ATUALIZAÇÃO REALIZADA"}
+        return{"mensagem": "TAREFA ATUALIZADA. "}
 
     except Exception as erro:
         return {"erro": str(erro)}
 
 
-@router.delete("/{titulo}")
-async def deleter_tarefa(titulo: str):
+@router.delete("/{id}")
+async def deleter_tarefa(id: int):
     try:
         Banco = ConectarBanco()
         Banco.conectar()
-        comando = ("delete from tarefas where titulo = %s")
-        Banco.cursor.execute(comando, (titulo,))
+        comando = ("delete from tarefas where id = %s")
+        Banco.cursor.execute(comando, (id,))
+        if Banco.cursor.rowcount == 0:
+            return {"mensagem": "NENHUM REGISTRO ENCONTRADO. "}
         Banco.conexao.commit()
-        return{"mensagem": "REMOÇÃO REALIZADA."}
+        return{"mensagem": "TAREFA REMOVIDA."}
     except Exception as erro:
         return {"erro": str(erro)}
 
